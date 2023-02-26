@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Users from './app/components/users'
-import SearchStatus from './app/components/searchStatus'
 import API from './app/api'
 
 function App() {
@@ -22,7 +21,6 @@ function App() {
     }
     return (
         <div>
-            <SearchStatus length={users.length} />
             <Users
                 users={users}
                 onDelete={handleDelete}

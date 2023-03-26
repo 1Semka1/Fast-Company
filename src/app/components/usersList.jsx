@@ -7,6 +7,7 @@ import GroupList from './groupList'
 import SearchStatus from './searchStatus'
 import UserTable from './usersTable'
 import _ from 'lodash'
+import SearchField from './searchField'
 
 const UsersList = () => {
     const pageSize = 8
@@ -44,6 +45,7 @@ const UsersList = () => {
     }
     const handleProfessionSelect = (item) => {
         setSelectedProf(item)
+        //  Здесь я очищаю строку поиска при выборе фильтра
         setSearch('')
     }
     const handlePageChange = (pageIndex) => {
@@ -53,24 +55,26 @@ const UsersList = () => {
         setSortBy(item)
     }
     const handleSearch = ({ target }) => {
+        //  Метод для создания контролируемого компонента. Так же очищаю фильтрацию при вводе
         setSearch(target.value)
+        setSelectedProf()
     }
     const handleSubmit = (e) => {
+        //  Отменяю поведение по умолчанию
         e.preventDefault()
-        setSelectedProf()
     }
     if (users) {
         const foundUsers = users.filter((user) =>
             user.name.toLowerCase().includes(search.toLowerCase())
-        )
-        console.log(foundUsers)
+        ) // Ищу совпадения по пользвателям из строки
+
         const filteredUsers = selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
-            : foundUsers
+            : foundUsers // Если отсутствует фильт, в filteredUsers я помещаю всех найденных пользователей
 
         const count = filteredUsers.length
         const sortedUsers = _.orderBy(
@@ -103,13 +107,11 @@ const UsersList = () => {
                     <SearchStatus length={count} />
 
                     <form onSubmit={handleSubmit}>
-                        <input
-                            id="search"
-                            name="search"
+                        <SearchField
+                            name={'search'}
                             value={search}
                             onChange={handleSearch}
-                            className="form-control"
-                        ></input>
+                        />
                     </form>
 
                     {count > 0 && (

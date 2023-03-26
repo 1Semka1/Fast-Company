@@ -63,7 +63,6 @@ const Login = () => {
                     <h3 className="mb-4">Авторизация</h3>
                     <form onSubmit={handleSubmit}>
                         <TextField
-                            id="email"
                             label={'Электронная почта'}
                             name={'email'}
                             value={email}
@@ -71,7 +70,6 @@ const Login = () => {
                             error={errors.email}
                         />
                         <TextField
-                            id="password"
                             label={'Пароль'}
                             type={'password'}
                             name={'password'}

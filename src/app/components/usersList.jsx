@@ -10,6 +10,7 @@ import _ from 'lodash'
 
 const UsersList = () => {
     const pageSize = 8
+    const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [professions, setProfessions] = useState()
     const [selectedProf, setSelectedProf] = useState()
@@ -19,6 +20,13 @@ const UsersList = () => {
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data))
     }, [])
+    useEffect(() => {
+        api.professions.fetchAll().then((data) => setProfessions(data))
+    }, [])
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [selectedProf])
+
     const handleDelete = (userId) => {
         setUsers((prevState) => prevState.filter((user) => user._id !== userId))
     }
@@ -34,15 +42,9 @@ const UsersList = () => {
         })
         setUsers(newUsers)
     }
-
-    useEffect(() => {
-        api.professions.fetchAll().then((data) => setProfessions(data))
-    }, [])
-    useEffect(() => {
-        setCurrentPage(1)
-    }, [selectedProf])
     const handleProfessionSelect = (item) => {
         setSelectedProf(item)
+        setSearch('')
     }
     const handlePageChange = (pageIndex) => {
         setCurrentPage(pageIndex)
@@ -50,15 +52,25 @@ const UsersList = () => {
     const handleSort = (item) => {
         setSortBy(item)
     }
-
+    const handleSearch = ({ target }) => {
+        setSearch(target.value)
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        setSelectedProf()
+    }
     if (users) {
+        const foundUsers = users.filter((user) =>
+            user.name.toLowerCase().includes(search.toLowerCase())
+        )
+        console.log(foundUsers)
         const filteredUsers = selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
-            : users
+            : foundUsers
 
         const count = filteredUsers.length
         const sortedUsers = _.orderBy(
@@ -89,6 +101,16 @@ const UsersList = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            id="search"
+                            name="search"
+                            value={search}
+                            onChange={handleSearch}
+                            className="form-control"
+                        ></input>
+                    </form>
 
                     {count > 0 && (
                         <UserTable

@@ -18,7 +18,7 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
                 <i
                     className={
                         'bi bi-caret-' +
-                        (selectedSort.order === 'asc' ? 'up-fill' : 'down-fill')
+                        (selectedSort.order === 'asc' ? 'down-fill' : 'up-fill')
                     }
                 ></i>
             )

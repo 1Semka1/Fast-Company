@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { paginate } from '../utils/paginate'
-import Pagination from './pagination'
+import { paginate } from '../../../utils/paginate'
+import Pagination from '../../common/pagination'
 import PropTypes from 'prop-types'
-import api from '../api'
-import GroupList from './groupList'
-import SearchStatus from './searchStatus'
-import UserTable from './usersTable'
+import api from '../../../api'
+import GroupList from '../../common/groupList'
+import SearchStatus from '../../ui/searchStatus'
+import UserTable from '../../ui/usersTable'
 import _ from 'lodash'
-import SearchField from './searchField'
+import SearchField from '../../common/searchField'
 
-const UsersList = () => {
+const UsersListPage = () => {
     const pageSize = 8
     const [search, setSearch] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
@@ -26,7 +26,7 @@ const UsersList = () => {
     }, [])
     useEffect(() => {
         setCurrentPage(1)
-    }, [selectedProf])
+    }, [selectedProf, search])
 
     const handleDelete = (userId) => {
         setUsers((prevState) => prevState.filter((user) => user._id !== userId))
@@ -45,7 +45,6 @@ const UsersList = () => {
     }
     const handleProfessionSelect = (item) => {
         setSelectedProf(item)
-        //  Здесь я очищаю строку поиска при выборе фильтра
         setSearch('')
     }
     const handlePageChange = (pageIndex) => {
@@ -55,18 +54,13 @@ const UsersList = () => {
         setSortBy(item)
     }
     const handleSearch = ({ target }) => {
-        //  Метод для создания контролируемого компонента. Так же очищаю фильтрацию при вводе
         setSearch(target.value)
         setSelectedProf()
-    }
-    const handleSubmit = (e) => {
-        //  Отменяю поведение по умолчанию
-        e.preventDefault()
     }
     if (users) {
         const foundUsers = users.filter((user) =>
             user.name.toLowerCase().includes(search.toLowerCase())
-        ) // Ищу совпадения по пользвателям из строки
+        )
 
         const filteredUsers = selectedProf
             ? users.filter(
@@ -74,7 +68,7 @@ const UsersList = () => {
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
-            : foundUsers // Если отсутствует фильт, в filteredUsers я помещаю всех найденных пользователей
+            : foundUsers
 
         const count = filteredUsers.length
         const sortedUsers = _.orderBy(
@@ -83,6 +77,7 @@ const UsersList = () => {
             [sortBy.order]
         )
         const userCrop = paginate(sortedUsers, currentPage, pageSize)
+
         const clearFilter = () => {
             setSelectedProf()
         }
@@ -106,13 +101,11 @@ const UsersList = () => {
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
 
-                    <form onSubmit={handleSubmit}>
-                        <SearchField
-                            name={'search'}
-                            value={search}
-                            onChange={handleSearch}
-                        />
-                    </form>
+                    <SearchField
+                        name={'search'}
+                        value={search}
+                        onChange={handleSearch}
+                    />
 
                     {count > 0 && (
                         <UserTable
@@ -138,8 +131,8 @@ const UsersList = () => {
     return 'loading...'
 }
 
-UsersList.propTypes = {
+UsersListPage.propTypes = {
     users: PropTypes.arrayOf(PropTypes.object)
 }
 
-export default UsersList
+export default UsersListPage

@@ -11,16 +11,19 @@ const TextField = ({ label, type, name, value, onChange, error }) => {
         setShowPassword((prevState) => !prevState)
     }
 
+    const handleChange = ({ target }) => {
+        onChange({ [target.name]: target.value })
+    }
     return (
         <div className="mb-4">
-            <label htmlFor={name}>{label}</label>{' '}
+            <label htmlFor={name}>{label}</label>
             <div className="input-group has-validation">
                 <input
                     type={showPassword ? 'text' : type}
                     id={name}
                     name={name}
                     value={value}
-                    onChange={onChange}
+                    onChange={handleChange}
                     className={getInputClasses()}
                 />
                 {type === 'password' && (
@@ -47,10 +50,10 @@ TextField.defaultProps = {
 }
 
 TextField.propTypes = {
-    label: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
+    label: PropTypes.string,
+    name: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
     error: PropTypes.string,
     type: PropTypes.string
 }

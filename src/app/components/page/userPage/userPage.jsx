@@ -1,27 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import api from '../../../api'
-import Qualities from '../../ui/qualities'
 import { useHistory } from 'react-router-dom'
+import UserCard from '../../ui/userCard'
+import QualitiesCard from '../../ui/qualitiesCard'
+import MeetingsCard from '../../ui/meetingsCard'
+import Comments from '../../ui/comments'
 
 const UserPage = ({ userId }) => {
     const [user, setUser] = useState()
+    const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
-        api.users.getById(userId).then((data) => setUser(data))
-    }, [])
+        setIsLoading(true)
+        api.users.getById(userId).then((data) => {
+            setUser(data)
+            setIsLoading(false)
+        })
+    }, [userId])
     const history = useHistory()
-    const handleShowAllUsers = () => {
-        history.push(`/users/${userId}/edit`)
+    const handleEditUser = () => {
+        history.push(history.location.pathname + '/edit')
     }
-    if (user) {
+    if (user && !isLoading) {
         return (
-            <div>
-                <h1>{user.name}</h1>
-                <h2>Профессия: {user.profession.name}</h2>
-                <Qualities qualities={user.qualities} />
-                <p>Встретился, раз: {user.completedMeetings}</p>
-                <h2>Оценка: {user.rate}</h2>
-                <button onClick={handleShowAllUsers}>Изменить</button>
+            <div className="container">
+                <div className="row gutters-sm">
+                    <div className="col-md-4 mb-3">
+                        <UserCard user={user} onEditUser={handleEditUser} />
+                        <QualitiesCard qualities={user.qualities} />
+                        <MeetingsCard meetings={user.completedMeetings} />
+                    </div>
+                    <div className="col-md-8">
+                        <Comments />
+                    </div>
+                </div>
             </div>
         )
     } else {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { validator } from '../../utils/validator'
 import CheckBoxField from '../common/form/checkBoxField'
 import TextField from '../common/form/textField'
+import { validatorConfig } from '../../utils/validatorConfig'
 
 const LoginForm = () => {
     const [data, setData] = useState({ email: '', password: '', stayOn: false })
@@ -22,30 +23,6 @@ const LoginForm = () => {
         const isValid = validate()
         if (!isValid) return
         console.log(data)
-    }
-
-    const validatorConfig = {
-        email: {
-            isRequired: {
-                message: 'Электронная почта обязательна для заполнения'
-            },
-            isEmail: {
-                message: 'Email введён некорректно'
-            }
-        },
-        password: {
-            isRequired: { message: 'Пароль обязателен для заполнения' },
-            isCapitalSymbol: {
-                message: 'Пароль должен содержать минимум одну заглавную букву'
-            },
-            isContainDigit: {
-                message: 'Пароль должен содержать минимум одну цифру'
-            },
-            minLength: {
-                message: 'Пароль должен содержать минимум 8 символов',
-                value: 8
-            }
-        }
     }
 
     const validate = () => {

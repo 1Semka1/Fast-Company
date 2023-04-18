@@ -33,5 +33,15 @@ export const validatorConfig = {
         isRequired: {
             message: 'Имя обязательно для заполнения'
         }
+    },
+    userId: {
+        isRequired: {
+            message: 'Выберите отправителя'
+        }
+    },
+    content: {
+        isRequired: {
+            message: 'Сообщение не может быть пустым'
+        }
     }
 }

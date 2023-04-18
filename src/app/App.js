@@ -7,7 +7,7 @@ import Users from './layouts/users'
 
 function App() {
     return (
-        <div>
+        <div className="font-montserrat-script">
             <NavBar />
             <Switch>
                 <Route path="/login/:type?" component={Login} />

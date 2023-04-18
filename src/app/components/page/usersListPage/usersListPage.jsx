@@ -77,6 +77,11 @@ const UsersListPage = () => {
             [sortBy.order]
         )
         const userCrop = paginate(sortedUsers, currentPage, pageSize)
+        if (!userCrop.length) {
+            if (currentPage !== 0) {
+                setCurrentPage((prevState) => prevState - 1)
+            }
+        }
 
         const clearFilter = () => {
             setSelectedProf()

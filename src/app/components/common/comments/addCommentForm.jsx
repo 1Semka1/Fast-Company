@@ -18,6 +18,7 @@ const AddCommentForm = ({ onSubmit }) => {
     }, [data])
     useEffect(() => {
         api.users.fetchAll().then((data) => {
+            console.log(data)
             setUsers(
                 Object.keys(data).map((user) => ({
                     label: data[user].name,

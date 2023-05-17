@@ -94,16 +94,16 @@ const RegisterForm = () => {
     return (
         <form onSubmit={handleSubmit}>
             <TextField
-                label={'Электронная почта'}
-                name={'email'}
+                label="Электронная почта"
+                name="email"
                 value={data.email}
                 onChange={handleChange}
                 error={errors.email}
             />
             <TextField
-                label={'Пароль'}
-                type={'password'}
-                name={'password'}
+                label="Пароль"
+                type="password"
+                name="password"
                 value={data.password}
                 onChange={handleChange}
                 error={errors.password}

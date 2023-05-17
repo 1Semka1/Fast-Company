@@ -17,8 +17,6 @@ export function dateDisplay(date) {
     const currentDate = new Date()
     const otherDate = new Date(Number(date))
 
-    console.log(Date.parse(currentDate))
-
     if (currentDate.getFullYear() - otherDate.getFullYear() === 0) {
         if (currentDate.getDay() - otherDate.getDay() === 0) {
             const minDif = Math.floor(

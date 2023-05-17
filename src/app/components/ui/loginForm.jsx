@@ -33,7 +33,7 @@ const LoginForm = () => {
 
     const isValid = Object.keys(errors).length === 0
 
-    const { email, password } = data
+    const { email, password, stayOn } = data
     return (
         <form onSubmit={handleSubmit}>
             <TextField
@@ -51,11 +51,7 @@ const LoginForm = () => {
                 onChange={handleChange}
                 error={errors.password}
             />
-            <CheckBoxField
-                value={data.stayOn}
-                onChange={handleChange}
-                name="stayOn"
-            >
+            <CheckBoxField value={stayOn} onChange={handleChange} name="stayOn">
                 Оставаться в системе
             </CheckBoxField>
             <button

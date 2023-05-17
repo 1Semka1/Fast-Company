@@ -77,6 +77,7 @@ const EditUser = ({ userId }) => {
             .then(() => history.replace(`/users/${userId}`))
     }
 
+    console.log(professions)
     const getProfessionById = (id) => {
         for (const prof of professions) {
             if (prof.value === id) {
@@ -121,15 +122,15 @@ const EditUser = ({ userId }) => {
                     {!isLoading && Object.keys(professions).length > 0 ? (
                         <form onSubmit={handleSubmit}>
                             <TextField
-                                label={'Имя'}
-                                name={'name'}
+                                label="Имя"
+                                name="name"
                                 value={data.name}
                                 onChange={handleChange}
                                 error={errors.name}
                             />
                             <TextField
-                                label={'Электронная почта'}
-                                name={'email'}
+                                label="Электронная почта"
+                                name="email"
                                 value={data.email}
                                 onChange={handleChange}
                                 error={errors.email}

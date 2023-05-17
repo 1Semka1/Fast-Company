@@ -38,7 +38,7 @@ const Comments = () => {
                         <h2>Комментарии</h2>
                         <hr />
                         <CommentsList
-                            comments={comments}
+                            comments={sortedComments}
                             onDelete={handleDelete}
                         />
                     </div>

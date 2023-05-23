@@ -3,10 +3,17 @@ import { validator } from '../../utils/validator'
 import CheckBoxField from '../common/form/checkBoxField'
 import TextField from '../common/form/textField'
 import { validatorConfig } from '../../utils/validatorConfig'
+import { useAuth } from '../../hooks/useAuth'
+import { useHistory } from 'react-router-dom'
 
 const LoginForm = () => {
+    const history = useHistory()
+
     const [data, setData] = useState({ email: '', password: '', stayOn: false })
     const [errors, setErrors] = useState({})
+
+    const { signIn } = useAuth()
+
     useEffect(() => {
         validate()
     }, [data])
@@ -18,11 +25,17 @@ const LoginForm = () => {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const isValid = validate()
         if (!isValid) return
-        console.log(data)
+
+        try {
+            await signIn(data)
+            history.push('/')
+        } catch (error) {
+            setErrors(error)
+        }
     }
 
     const validate = () => {

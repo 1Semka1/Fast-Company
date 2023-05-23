@@ -19,7 +19,6 @@ const UsersListPage = () => {
     const [sortBy, setSortBy] = useState({ path: 'name', order: 'asc' })
 
     const { users } = useUser()
-    console.log(users)
 
     useEffect(() => {
         api.professions.fetchAll().then((data) => setProfessions(data))
@@ -60,17 +59,17 @@ const UsersListPage = () => {
         setSelectedProf()
     }
     if (users) {
-        const foundUsers = users.filter((user) =>
-            user.name.toLowerCase().includes(search.toLowerCase())
-        )
-
-        const filteredUsers = selectedProf
+        const filteredUsers = search
+            ? users.filter((user) =>
+                  user.name?.toLowerCase().includes(search.toLowerCase())
+              )
+            : selectedProf
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
                       JSON.stringify(selectedProf)
               )
-            : foundUsers
+            : users
 
         const count = filteredUsers.length
         const sortedUsers = _.orderBy(

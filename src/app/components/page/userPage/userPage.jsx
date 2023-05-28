@@ -1,27 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import api from '../../../api'
 import { useHistory } from 'react-router-dom'
 import UserCard from '../../ui/userCard'
 import QualitiesCard from '../../ui/qualitiesCard'
 import MeetingsCard from '../../ui/meetingsCard'
 import Comments from '../../ui/comments'
+import { useUser } from '../../../hooks/useUsers'
+import { CommentsProvider } from '../../../hooks/useComments'
 
 const UserPage = ({ userId }) => {
-    const [user, setUser] = useState()
-    const [isLoading, setIsLoading] = useState(false)
-    useEffect(() => {
-        setIsLoading(true)
-        api.users.getById(userId).then((data) => {
-            setUser(data)
-            setIsLoading(false)
-        })
-    }, [userId])
     const history = useHistory()
+
+    const { getUserById } = useUser()
+    const user = getUserById(userId)
+
     const handleEditUser = () => {
         history.push(history.location.pathname + '/edit')
     }
-    if (user && !isLoading) {
+
+    if (user) {
         return (
             <div className="container">
                 <div className="row gutters-sm">
@@ -31,7 +28,9 @@ const UserPage = ({ userId }) => {
                         <MeetingsCard meetings={user.completedMeetings} />
                     </div>
                     <div className="col-md-8">
-                        <Comments />
+                        <CommentsProvider>
+                            <Comments />
+                        </CommentsProvider>
                     </div>
                 </div>
             </div>

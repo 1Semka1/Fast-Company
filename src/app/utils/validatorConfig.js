@@ -32,11 +32,10 @@ export const validatorConfig = {
     name: {
         isRequired: {
             message: 'Имя обязательно для заполнения'
-        }
-    },
-    userId: {
-        isRequired: {
-            message: 'Выберите отправителя'
+        },
+        minLength: {
+            message: 'Пароль должен содержать минимум 2 символов',
+            value: 2
         }
     },
     content: {

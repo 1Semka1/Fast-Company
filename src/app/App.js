@@ -9,6 +9,8 @@ import { QualitiesProvider } from './hooks/useQualities'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import AuthProvide from './hooks/useAuth'
+import ProtectedRoute from './components/common/protectedRoute'
+import LogOut from './layouts/logOut'
 
 function App() {
     return (
@@ -19,10 +21,11 @@ function App() {
                     <QualitiesProvider>
                         <Switch>
                             <Route path="/login/:type?" component={Login} />
-                            <Route
+                            <ProtectedRoute
                                 path="/users/:userId?/:edit?"
                                 component={Users}
                             />
+                            <Route path="/logout" component={LogOut} />
                             <Route path="/" component={Main} />
                             <Redirect to="/" />
                         </Switch>

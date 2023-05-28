@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import api from '../../../api'
 import TextField from '../../common/form/textField'
 import SelectField from '../../common/form/selectField'
 import RadioField from '../../common/form/radioField'
@@ -8,10 +7,13 @@ import MultiSelectField from '../../common/form/multiSelectField'
 import { validator } from '../../../utils/validator'
 import { useHistory } from 'react-router-dom'
 import { validatorConfig } from '../../../utils/validatorConfig'
+import { useProfessions } from '../../../hooks/useProfession'
+import { useQualities } from '../../../hooks/useQualities'
+import { useAuth } from '../../../hooks/useAuth'
 
 const EditUser = ({ userId }) => {
     const history = useHistory()
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [data, setData] = useState({
         name: '',
         email: '',
@@ -19,38 +21,24 @@ const EditUser = ({ userId }) => {
         sex: 'male',
         qualities: []
     })
-    const [professions, setProfessions] = useState([])
-    const [qualities, setQualities] = useState([])
+    const { currentUser, updateUser } = useAuth()
+    const { professions, isLoading: professionsLoading } = useProfessions()
+    const {
+        qualities,
+        getQuality,
+        isLoading: qualitiesLoading
+    } = useQualities()
     const [errors, setErrors] = useState({})
+
     useEffect(() => {
-        setIsLoading(true)
-        api.users.getById(userId).then((data) =>
-            setData((prevState) => ({
-                ...prevState,
-                ...data,
-                profession: data.profession._id,
-                qualities: data.qualities.map((qual) => ({
-                    label: qual.name,
-                    value: qual._id
-                }))
-            }))
-        )
-        api.professions.fetchAll().then((data) => {
-            const professionsList = Object.keys(data).map((professionName) => ({
-                label: data[professionName].name,
-                value: data[professionName]._id
-            }))
-            setProfessions(professionsList)
-        })
-        api.qualities.fetchAll().then((data) => {
-            const qualitiesList = Object.keys(data).map((optionName) => ({
-                label: data[optionName].name,
-                value: data[optionName]._id,
-                color: data[optionName].color
-            }))
-            setQualities(qualitiesList)
-        })
-    }, [])
+        if (!professionsLoading && !qualitiesLoading) {
+            setData({
+                ...currentUser,
+                qualities: transformQualitiesByIds(currentUser.qualities)
+            })
+        }
+    }, [professionsLoading, qualitiesLoading])
+
     useEffect(() => {
         if (data._id) setIsLoading(false)
         validate()
@@ -63,40 +51,26 @@ const EditUser = ({ userId }) => {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         const isValid = validate()
         if (!isValid) return
-        const { profession, qualities } = data
-        api.users
-            .update(userId, {
-                ...data,
-                profession: getProfessionById(profession),
-                qualities: getQualities(qualities)
-            })
-            .then(() => history.replace(`/users/${userId}`))
+        await updateUser({
+            ...data,
+            qualities: data.qualities.map((qual) => qual.value)
+        })
+        history.push(`/users/${userId}`)
     }
 
-    console.log(professions)
-    const getProfessionById = (id) => {
-        for (const prof of professions) {
-            if (prof.value === id) {
-                return { _id: prof.value, name: prof.label }
-            }
-        }
-    }
-    const getQualities = (elements) => {
+    const transformQualitiesByIds = (ids) => {
         const qualitiesArray = []
-        for (const elem of elements) {
-            for (const quality in qualities) {
-                if (elem.value === qualities[quality].value) {
-                    qualitiesArray.push({
-                        _id: qualities[quality].value,
-                        name: qualities[quality].label,
-                        color: qualities[quality].color
-                    })
-                }
-            }
+        for (const id of ids) {
+            const quality = getQuality(id)
+            qualitiesArray.push({
+                label: quality.name,
+                value: quality._id,
+                color: quality.color
+            })
         }
         return qualitiesArray
     }
@@ -119,7 +93,7 @@ const EditUser = ({ userId }) => {
             </button>
             <div className="row">
                 <div className="col-md-6 offset-md-3 shadow p-4">
-                    {!isLoading && Object.keys(professions).length > 0 ? (
+                    {!isLoading ? (
                         <form onSubmit={handleSubmit}>
                             <TextField
                                 label="Имя"

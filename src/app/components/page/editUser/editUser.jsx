@@ -7,40 +7,41 @@ import MultiSelectField from '../../common/form/multiSelectField'
 import { validator } from '../../../utils/validator'
 import { useHistory } from 'react-router-dom'
 import { validatorConfig } from '../../../utils/validatorConfig'
-import { useProfessions } from '../../../hooks/useProfession'
-import { useQualities } from '../../../hooks/useQualities'
 import { useAuth } from '../../../hooks/useAuth'
+import { useSelector } from 'react-redux'
+import {
+    getQualities,
+    getQualitiesLoadingStatus
+} from '../../../store/qualities'
+import {
+    getProfessions,
+    getProfessionsLoadingStatus
+} from '../../../store/professions'
 
 const EditUser = ({ userId }) => {
     const history = useHistory()
     const [isLoading, setIsLoading] = useState(true)
-    const [data, setData] = useState({
-        name: '',
-        email: '',
-        profession: '',
-        sex: 'male',
-        qualities: []
-    })
+    const [data, setData] = useState()
     const { currentUser, updateUser } = useAuth()
-    const { professions, isLoading: professionsLoading } = useProfessions()
-    const {
-        qualities,
-        getQuality,
-        isLoading: qualitiesLoading
-    } = useQualities()
+
+    const qualities = useSelector(getQualities())
+    const qualitiesLoading = useSelector(getQualitiesLoadingStatus())
+    const professions = useSelector(getProfessions())
+    const professionsLoading = useSelector(getProfessionsLoadingStatus())
+
     const [errors, setErrors] = useState({})
 
     useEffect(() => {
-        if (!professionsLoading && !qualitiesLoading) {
+        if (!professionsLoading && !qualitiesLoading && !data) {
             setData({
                 ...currentUser,
                 qualities: transformQualitiesByIds(currentUser.qualities)
             })
         }
-    }, [professionsLoading, qualitiesLoading])
+    }, [professionsLoading, qualitiesLoading, data])
 
     useEffect(() => {
-        if (data._id) setIsLoading(false)
+        if (data && isLoading) setIsLoading(false)
         validate()
     }, [data])
 
@@ -65,12 +66,16 @@ const EditUser = ({ userId }) => {
     const transformQualitiesByIds = (ids) => {
         const qualitiesArray = []
         for (const id of ids) {
-            const quality = getQuality(id)
-            qualitiesArray.push({
-                label: quality.name,
-                value: quality._id,
-                color: quality.color
-            })
+            for (const quality of qualities) {
+                if (quality._id === id) {
+                    qualitiesArray.push({
+                        label: quality.name,
+                        value: quality._id,
+                        color: quality.color
+                    })
+                    break
+                }
+            }
         }
         return qualitiesArray
     }

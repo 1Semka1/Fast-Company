@@ -7,8 +7,7 @@ import MultiSelectField from '../../common/form/multiSelectField'
 import { validator } from '../../../utils/validator'
 import { useHistory } from 'react-router-dom'
 import { validatorConfig } from '../../../utils/validatorConfig'
-import { useAuth } from '../../../hooks/useAuth'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     getQualities,
     getQualitiesLoadingStatus
@@ -17,13 +16,14 @@ import {
     getProfessions,
     getProfessionsLoadingStatus
 } from '../../../store/professions'
+import { getCurrentUserData, updateUser } from '../../../store/users'
 
 const EditUser = ({ userId }) => {
     const history = useHistory()
     const [isLoading, setIsLoading] = useState(true)
     const [data, setData] = useState()
-    const { currentUser, updateUser } = useAuth()
-
+    const dispatch = useDispatch()
+    const currentUser = useSelector(getCurrentUserData())
     const qualities = useSelector(getQualities())
     const qualitiesLoading = useSelector(getQualitiesLoadingStatus())
     const professions = useSelector(getProfessions())
@@ -52,14 +52,16 @@ const EditUser = ({ userId }) => {
         }))
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
         const isValid = validate()
         if (!isValid) return
-        await updateUser({
-            ...data,
-            qualities: data.qualities.map((qual) => qual.value)
-        })
+        dispatch(
+            updateUser({
+                ...data,
+                qualities: data.qualities.map((qual) => qual.value)
+            })
+        )
         history.push(`/users/${userId}`)
     }
 
@@ -91,7 +93,7 @@ const EditUser = ({ userId }) => {
     return (
         <div className="container mt-5">
             <button
-                className="btn btn-primary"
+                className="btn btn-primary mb-3"
                 onClick={() => history.goBack()}
             >
                 <i className="bi bi-caret-left-fill"></i> Назад

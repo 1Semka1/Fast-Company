@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import NavBar from './components/ui/navBar'
 import Login from './layouts/login'
@@ -7,24 +7,14 @@ import Users from './layouts/users'
 import { ProfessionProvider } from './hooks/useProfession'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import AuthProvide from './hooks/useAuth'
 import ProtectedRoute from './components/common/protectedRoute'
 import LogOut from './layouts/logOut'
-import { useDispatch } from 'react-redux'
-import { loadQualitiesList } from './store/qualities'
-import { loadProfessionsList } from './store/professions'
+import AppLoader from './components/ui/hoc/appLoader'
 
 function App() {
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(loadQualitiesList())
-        dispatch(loadProfessionsList())
-    }, [])
-
     return (
         <div className="font-montserrat-script">
-            <AuthProvide>
+            <AppLoader>
                 <NavBar />
                 <ProfessionProvider>
                     <Switch>
@@ -38,7 +28,7 @@ function App() {
                         <Redirect to="/" />
                     </Switch>
                 </ProfessionProvider>
-            </AuthProvide>
+            </AppLoader>
             <ToastContainer />
         </div>
     )

@@ -32,7 +32,7 @@ const UserTable = ({ users, onSort, selectedSort, ...rest }) => {
             path: 'bookmark',
             name: 'Избранное',
             component: (user) => (
-                <BookMark status={user.bookmark} userId={user._id} {...rest} />
+                <BookMark status={false} userId={user._id} {...rest} />
             )
         }
     }

@@ -18,7 +18,7 @@ import {
 } from '../../../store/professions'
 import { getCurrentUserData, updateUser } from '../../../store/users'
 
-const EditUser = ({ userId }) => {
+const EditUser = () => {
     const history = useHistory()
     const [isLoading, setIsLoading] = useState(true)
     const [data, setData] = useState()
@@ -62,7 +62,6 @@ const EditUser = ({ userId }) => {
                 qualities: data.qualities.map((qual) => qual.value)
             })
         )
-        history.push(`/users/${userId}`)
     }
 
     const transformQualitiesByIds = (ids) => {

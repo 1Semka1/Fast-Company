@@ -4,8 +4,8 @@ import CheckBoxField from '../common/form/checkBoxField'
 import TextField from '../common/form/textField'
 import { validatorConfig } from '../../utils/validatorConfig'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { logIn } from '../../store/users'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAuthError, logIn } from '../../store/users'
 
 const LoginForm = () => {
     const history = useHistory()
@@ -14,6 +14,7 @@ const LoginForm = () => {
     const [errors, setErrors] = useState({})
 
     const dispatch = useDispatch()
+    const loginError = useSelector(getAuthError())
 
     useEffect(() => {
         validate()
@@ -66,6 +67,7 @@ const LoginForm = () => {
             <CheckBoxField value={stayOn} onChange={handleChange} name="stayOn">
                 Оставаться в системе
             </CheckBoxField>
+            {loginError && <p className="text-danger">{loginError}</p>}
             <button
                 type="Submit"
                 disabled={!isValid}
